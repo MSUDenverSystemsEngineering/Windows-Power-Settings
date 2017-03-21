@@ -139,10 +139,15 @@ Try {
 		$mainExitCode = $exitCode.ExitCode
 		}
 
-
 		$exitCode = Execute-Process -Path "$envSystem32Directory\powercfg.exe" -Parameters "/CHANGE standby-timeout-ac 0" -WindowStyle "Hidden" -PassThru
 		If ($exitCode.ExitCode -ne "0") {
 		$mainExitCode = $exitCode.ExitCode
+		}
+
+		If ($EnableScheduledShutdown) {
+			$exitCode = Execute-Process -Path "$exeSchTasks" -Parameters "/Create /SC DAILY /TN "Daily Shutdown" /TR "shutdown /s /t 0" /ST 23:59" -WindowStyle "Hidden" -PassThru
+			If ($exitCode.ExitCode -ne "0") {
+			$mainExitCode = $exitCode.ExitCode
 		}
 		##*===============================================
 		##* POST-INSTALLATION
